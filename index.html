@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>抖音爆款抽卡</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Microsoft YaHei", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #080808, #111827, #1e293b);
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 460px;
+    }
+
+    .title {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px #00f0ff, 0 0 20px #ff007a;
+    }
+
+    .sub {
+      text-align: center;
+      color: #cbd5e1;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .panel {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .input-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    input {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      outline: none;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      color: white;
+      font-size: 15px;
+    }
+
+    input::placeholder {
+      color: #94a3b8;
+    }
+
+    .tips {
+      font-size: 13px;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+
+    .card-wrap {
+      perspective: 1200px;
+      margin-bottom: 18px;
+    }
+
+    .card-scene {
+      width: 100%;
+      height: 520px;
+      position: relative;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease;
+    }
+
+    .card-inner.flip {
+      transform: rotateY(180deg);
+    }
+
+    .card-face {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      backface-visibility: hidden;
+      overflow: hidden;
+      border: 2px solid rgba(255,255,255,0.12);
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, #0f172a, #111827);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.12);
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      box-shadow: 0 0 30px rgba(255, 0, 122, 0.18);
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .front-text {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .front-text .big {
+      font-size: 80px;
+      margin-bottom: 16px;
+      text-shadow: 0 0 14px rgba(255,255,255,0.35);
+    }
+
+    .front-text .small {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .front-text .desc {
+      color: #94a3b8;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .card-content {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .shine {
+      position: absolute;
+      top: -120%;
+      left: -45%;
+      width: 60%;
+      height: 300%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.24), transparent);
+      transform: rotate(18deg);
+      animation: shine 3s linear infinite;
+    }
+
+    .rarity {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      z-index: 2;
+    }
+
+    .r { background: rgba(96,165,250,0.2); color: #60a5fa; }
+    .sr { background: rgba(192,132,252,0.2); color: #c084fc; }
+    .ssr { background: rgba(250,204,21,0.2); color: #facc15; }
+    .ur { background: rgba(251,113,133,0.2); color: #fb7185; }
+
+    .emoji {
+      font-size: 70px;
+      margin-bottom: 16px;
+      z-index: 2;
+      animation: float 2s ease-in-out infinite;
+    }
+
+    .card-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      z-index: 2;
+      line-height: 1.4;
+    }
+
+    .owner {
+      font-size: 15px;
+      color: #67e8f9;
+      margin-bottom: 14px;
+      z-index: 2;
+    }
+
+    .card-desc {
+      font-size: 16px;
+      color: #e2e8f0;
+      line-height: 1.8;
+      margin-bottom: 18px;
+      z-index: 2;
+      min-height: 80px;
+    }
+
+    .tag {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: #cbd5e1;
+      font-size: 13px;
+      z-index: 2;
+    }
+
+    .glow-r { box-shadow: 0 0 20px #60a5fa, 0 0 50px rgba(96,165,250,0.45); }
+    .glow-sr { box-shadow: 0 0 20px #c084fc, 0 0 60px rgba(192,132,252,0.55); }
+    .glow-ssr { box-shadow: 0 0 20px #facc15, 0 0 65px rgba(250,204,21,0.6); }
+    .glow-ur { box-shadow: 0 0 25px #fb7185, 0 0 78px rgba(251,113,133,0.72); }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: bold;
+      transition: 0.25s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .main-btn {
+      background: linear-gradient(90deg, #00f0ff, #ff007a);
+      color: white;
+      box-shadow: 0 0 16px rgba(255,0,122,0.35);
+    }
+
+    .sub-btn {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .share-tip {
+      text-align: center;
+      font-size: 13px;
+      color: #fda4af;
+      margin-bottom: 16px;
+      min-height: 18px;
+    }
+
+    .rank-box h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .rank-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-size: 14px;
+    }
+
+    .rank-item:last-child {
+      border-bottom: none;
+    }
+
+    .rank-left {
+      color: #f8fafc;
+    }
+
+    .rank-right {
+      color: #94a3b8;
+      text-align: right;
+    }
+
+    .hidden-canvas {
+      display: none;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+      100% { transform: translateY(0); }
+    }
+
+    @keyframes shine {
+      0% { left: -50%; }
+      100% { left: 135%; }
+    }
+
+    @media (max-width: 520px) {
+      .card-scene {
+        height: 500px;
+      }
+
+      .title {
+        font-size: 28px;
+      }
+
+      .card-name {
+        font-size: 24px;
+      }
+
+      .input-box {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="title">抖音爆款抽卡</div>
+    <div class="sub">输入名字，抽出你今天的短视频爆款体质</div>
+
+    <div class="panel">
+      <div class="input-box">
+        <input type="text" id="username" placeholder="请输入你的名字" maxlength="12" />
+        <button class="main-btn" onclick="drawCard()">开始抽卡</button>
+      </div>
+      <div class="tips">
+        上传到 GitHub Pages 时，请把 bgMusic.mp3 一起上传到仓库根目录。
+      </div>
+    </div>
+
+    <div class="card-wrap">
+      <div class="card-scene">
+        <div class="card-inner" id="cardInner">
+          <div class="card-face card-front">
+            <div class="front-text">
+              <div class="big">🎴</div>
+              <div class="small">点击开始抽卡</div>
+              <div class="desc">翻开这张卡，看看你是哪一种抖音爆款人设。</div>
+            </div>
+          </div>
+
+          <div class="card-face card-back" id="cardBack">
+            <div class="card-content">
+              <div class="shine"></div>
+              <div class="rarity r" id="rarity">R 普通热度</div>
+              <div class="emoji" id="emoji">🎲</div>
+              <div class="card-name" id="cardName">等待抽卡</div>
+              <div class="owner" id="ownerName">你的专属人设</div>
+              <div class="card-desc" id="cardDesc">输入名字后开始抽卡。</div>
+              <div class="tag" id="tag">#抖音 #抽卡 #爆款体质</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btns">
+      <button class="main-btn" onclick="drawCard()">再抽一次</button>
+      <button class="sub-btn" onclick="saveAsImage()">生成结果图片</button>
+      <button class="sub-btn" onclick="shareUnlock()">分享给朋友再抽一次</button>
+      <button class="sub-btn" onclick="toggleMusic()" id="musicBtn">背景音乐：关</button>
+    </div>
+
+    <div class="share-tip" id="shareTip"></div>
+
+    <div class="panel rank-box">
+      <h3>今日排行榜</h3>
+      <div id="rankList">
+        <div class="rank-item">
+          <div class="rank-left">加载中...</div>
+          <div class="rank-right">请稍候</div>
+        </div>
+      </div>
+    </div>
+
+    <canvas id="saveCanvas" class="hidden-canvas" width="800" height="1200"></canvas>
+
+    <audio id="bgMusic" loop preload="auto" src="./bgMusic.mp3"></audio>
+  </div>
+
+  <!-- 更稳定的 Supabase v2 浏览器引入 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://zeqfsmhwbdelaywtgack.supabase.co";
+    const SUPABASE_KEY = "你的 anon key";
+
+    if (!window.supabase) {
+      alert("Supabase SDK 加载失败，请检查网络或 CDN 引入是否正常");
+      throw new Error("window.supabase is undefined");
+    }
+
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const cards = [
+      { rarity: "R", rarityClass: "r", emoji: "😂", name: "搞笑区潜力股", desc: "你天生自带一点整活气质，发点轻松搞笑内容很容易吸引别人停留。", tag: "#搞笑博主 #轻松整活" },
+      { rarity: "R", rarityClass: "r", emoji: "📱", name: "日常分享型", desc: "你适合拍真实生活，越自然越容易让人有代入感。", tag: "#日常分享 #真实感" },
+      { rarity: "SR", rarityClass: "sr", emoji: "✨", name: "氛围感选手", desc: "你拍视频很吃镜头氛围，只要画面和音乐搭好，质感立刻拉满。", tag: "#氛围感 #高级感" },
+      { rarity: "SR", rarityClass: "sr", emoji: "🎧", name: "BGM拿捏大师", desc: "你最强的是节奏感，普通内容加上合适音乐就会变得很有感觉。", tag: "#配乐高手 #节奏感" },
+      { rarity: "SSR", rarityClass: "ssr", emoji: "🔥", name: "热门体质拥有者", desc: "你很适合追热点，做热点改编内容时更容易冲出一波流量。", tag: "#热点体质 #容易起量" },
+      { rarity: "SSR", rarityClass: "ssr", emoji: "👀", name: "评论区收割机", desc: "你的内容容易让别人评论：太真实了，这不就是我吗。", tag: "#互动很强 #评论区爆" },
+      { rarity: "UR", rarityClass: "ur", emoji: "👑", name: "抖音天选爆款王", desc: "你属于很有爆点的人设类型，只要方向选对，内容传播力会很强。", tag: "#爆款选手 #王炸" },
+      { rarity: "UR", rarityClass: "ur", emoji: "🚀", name: "一夜起号体质", desc: "你自带短视频潜力，只要坚持更新，很容易被更多人刷到。", tag: "#起号潜力 #高传播" }
+    ];
+
+    let currentResult = null;
+    let drawChance = 1;
+
+    function rarityWeight() {
+      const rand = Math.random() * 100;
+      if (rand < 45) return "R";
+      if (rand < 78) return "SR";
+      if (rand < 95) return "SSR";
+      return "UR";
+    }
+
+    function getRandomCard() {
+      const rarity = rarityWeight();
+      const pool = cards.filter(item => item.rarity === rarity);
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    async function drawCard() {
+      const username = document.getElementById("username").value.trim();
+      const shareTip = document.getElementById("shareTip");
+
+      if (!username) {
+        alert("请先输入名字再抽卡");
+        return;
+      }
+
+      if (drawChance <= 0) {
+        alert("你当前次数用完了，点击“分享给朋友再抽一次”解锁次数。");
+        return;
+      }
+
+      drawChance--;
+      shareTip.textContent = drawChance === 0 ? "抽卡次数已用完，分享后可再抽一次" : "";
+
+      const result = getRandomCard();
+      currentResult = { username, ...result };
+
+      updateCard(currentResult);
+      await saveToRanking(currentResult);
+    }
+
+    function updateCard(data) {
+      const cardInner = document.getElementById("cardInner");
+      const cardBack = document.getElementById("cardBack");
+      const rarity = document.getElementById("rarity");
+      const emoji = document.getElementById("emoji");
+      const cardName = document.getElementById("cardName");
+      const ownerName = document.getElementById("ownerName");
+      const cardDesc = document.getElementById("cardDesc");
+      const tag = document.getElementById("tag");
+
+      cardBack.className = "card-face card-back";
+      if (data.rarity === "R") cardBack.classList.add("glow-r");
+      if (data.rarity === "SR") cardBack.classList.add("glow-sr");
+      if (data.rarity === "SSR") cardBack.classList.add("glow-ssr");
+      if (data.rarity === "UR") cardBack.classList.add("glow-ur");
+
+      rarity.className = "rarity " + data.rarityClass;
+      rarity.innerText =
+        data.rarity === "R" ? "R 普通热度" :
+        data.rarity === "SR" ? "SR 小热门" :
+        data.rarity === "SSR" ? "SSR 大热门" :
+        "UR 爆款神卡";
+
+      emoji.innerText = data.emoji;
+      cardName.innerText = data.name;
+      ownerName.innerText = data.username + " 的专属结果";
+      cardDesc.innerText = data.desc;
+      tag.innerText = data.tag;
+
+      cardInner.classList.remove("flip");
+      setTimeout(() => {
+        cardInner.classList.add("flip");
+      }, 80);
+    }
+
+    async function saveToRanking(result) {
+      const { data, error } = await supabase
+        .from("leaderboard")
+        .insert([
+          {
+            username: result.username,
+            rarity: result.rarity,
+            name: result.name
+          }
+        ])
+        .select();
+
+      console.log("插入结果：", { data, error });
+
+      if (error) {
+        console.error("保存排行榜失败：", error);
+        alert("保存排行榜失败：" + error.message);
+        return;
+      }
+
+      await loadRanking();
+    }
+
+    async function loadRanking() {
+      const rankList = document.getElementById("rankList");
+
+      const { data, error } = await supabase
+        .from("leaderboard")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(10);
+
+      console.log("排行榜数据：", { data, error });
+
+      if (error) {
+        console.error("读取排行榜失败：", error);
+        rankList.innerHTML = `
+          <div class="rank-item">
+            <div class="rank-left">加载失败</div>
+            <div class="rank-right">${error.message}</div>
+          </div>
+        `;
+        return;
+      }
+
+      if (!data || !data.length) {
+        rankList.innerHTML = `
+          <div class="rank-item">
+            <div class="rank-left">暂无记录</div>
+            <div class="rank-right">快来抽第一张卡</div>
+          </div>
+        `;
+        return;
+      }
+
+      rankList.innerHTML = data.map((item, index) => `
+        <div class="rank-item">
+          <div class="rank-left">#${index + 1} ${escapeHtml(item.username || "")} - ${escapeHtml(item.name || "")}</div>
+          <div class="rank-right">${escapeHtml(item.rarity || "")}<br>${formatDate(item.created_at)}</div>
+        </div>
+      `).join("");
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return "";
+      return d.toLocaleString("zh-CN");
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function saveAsImage() {
+      if (!currentResult) {
+        alert("请先抽卡，再生成结果图片");
+        return;
+      }
+
+      const canvas = document.getElementById("saveCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const gradient = ctx.createLinearGradient(0, 0, 800, 1200);
+      gradient.addColorStop(0, "#0f172a");
+      gradient.addColorStop(0.5, "#111827");
+      gradient.addColorStop(1, "#1e293b");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 800, 1200);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 52px Microsoft YaHei";
+      ctx.textAlign = "center";
+      ctx.fillText("抖音爆款抽卡结果", 400, 100);
+
+      ctx.fillStyle = "rgba(255,255,255,0.08)";
+      roundRect(ctx, 100, 170, 600, 760, 34, true);
+
+      ctx.fillStyle = rarityColor(currentResult.rarity);
+      roundRect(ctx, 280, 230, 240, 60, 30, true);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 30px Microsoft YaHei";
+      ctx.fillText(
+        currentResult.rarity === "R" ? "R 普通热度" :
+        currentResult.rarity === "SR" ? "SR 小热门" :
+        currentResult.rarity === "SSR" ? "SSR 大热门" : "UR 爆款神卡",
+        400, 270
+      );
+
+      ctx.font = "100px Microsoft YaHei";
+      ctx.fillText(currentResult.emoji, 400, 400);
+
+      ctx.font = "bold 46px Microsoft YaHei";
+      ctx.fillText(currentResult.name, 400, 510);
+
+      ctx.fillStyle = "#67e8f9";
+      ctx.font = "28px Microsoft YaHei";
+      ctx.fillText(currentResult.username + " 的专属结果", 400, 570);
+
+      ctx.fillStyle = "#e2e8f0";
+      ctx.font = "30px Microsoft YaHei";
+      ctx.fillText(currentResult.desc, 400, 650);
+
+      ctx.fillStyle = "#cbd5e1";
+      ctx.font = "24px Microsoft YaHei";
+      ctx.fillText(currentResult.tag, 400, 820);
+
+      const link = document.createElement("a");
+      link.download = "抖音爆款抽卡结果.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    }
+
+    function rarityColor(rarity) {
+      if (rarity === "R") return "rgba(96,165,250,0.35)";
+      if (rarity === "SR") return "rgba(192,132,252,0.35)";
+      if (rarity === "SSR") return "rgba(250,204,21,0.35)";
+      return "rgba(251,113,133,0.35)";
+    }
+
+    function roundRect(ctx, x, y, w, h, r, fill) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      if (fill) ctx.fill();
+    }
+
+    function shareUnlock() {
+      drawChance = 1;
+      document.getElementById("shareTip").textContent = "已解锁一次抽卡机会，快让朋友也来玩。";
+
+      if (navigator.share && currentResult) {
+        navigator.share({
+          title: "抖音爆款抽卡",
+          text: "我刚测了自己的抖音爆款体质，你也来试试！"
+        }).catch(() => {});
+      } else {
+        alert("已模拟分享成功，获得一次新的抽卡机会。");
+      }
+    }
+
+    function toggleMusic() {
+      const music = document.getElementById("bgMusic");
+      const btn = document.getElementById("musicBtn");
+
+      if (music.paused) {
+        music.play().then(() => {
+          btn.innerText = "背景音乐：开";
+        }).catch(() => {
+          alert("音乐播放失败。请确认仓库里已经上传了 bgMusic.mp3。");
+        });
+      } else {
+        music.pause();
+        btn.innerText = "背景音乐：关";
+      }
+    }
+
+    // 页面启动时加载排行榜
+    window.addEventListener("DOMContentLoaded", () => {
+      loadRanking();
+    });
+  </script>
+</body>
+</html>
